@@ -140,7 +140,7 @@ while True:
 
 print('\nFinal data string:')
 print("".join(data) + '\n')
-
+initial_analyse = analyse(data)
 print("""You have ${}. Every time the system successfully predicts your next press, you lose $1.
 Otherwise, you earn ${}. Print "enough" to leave the game. Let's go!""".format(money, bet))
 
@@ -159,18 +159,15 @@ while True:
     user = input()
     if user == 'enough':
         break
-    elif set(user) != {'1', '0'}:
-        pass
-    elif user == 'enough':
-        break
-    else:
+    elif set(user) == {'1', '0'} or set(user) == {'1'} or set(user) == {'0'}:
         new_data = []
+
         for char in list(user):
             if str(char) == '1' or str(char) == '0':
                 new_data += str(char)
             else:
                 break
-        guess, pred = predict(new_data, first_three, analyse(data))
+        guess, pred = predict(new_data, first_three, initial_analyse)
         money -= bet * pred
         money += bet * ((len(new_data) - 3) - pred)
         print("prediction:")
@@ -178,5 +175,14 @@ while True:
         print('\nComputer guessed right {} out of {} symbols ({} %)'
               .format(pred, len(new_data) - 3, round(pred * 100 / (len(new_data) - 3), 2)))
         print("Your balance is now ${}".format(money))
+        new_analyse = analyse(new_data)
+
+        for v in range(len(initial_analyse)):
+            # iterate through columns
+            for k in range(len(initial_analyse[0])):
+                initial_analyse[v][k] += + new_analyse[v][k]
+    else:
+        pass
 
 print("Game over!")
+print(analyse(data))
